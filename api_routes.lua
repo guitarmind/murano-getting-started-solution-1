@@ -61,7 +61,7 @@ if true then
   -- Assumes temperature and humidity data device resources
   out = Timeseries.query({
     epoch='ms',
-    q = "SELECT value FROM temperature,humidity WHERE identifier = '" ..identifier.."' time > now() - "..window.."m LIMIT 5000"})
+    q = "SELECT value FROM temperature,humidity WHERE identifier = '" ..identifier.."' AND time > now() - "..window.."m LIMIT 5000"})
   data['timeseries'] = out
   return data
 else
