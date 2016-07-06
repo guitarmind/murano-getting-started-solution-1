@@ -36,7 +36,7 @@ end
 -- Parameters: ?identifier=<uniqueidentifier>
 local identifier = tostring(request.parameters.identifier)
 
-if true then
+if tostring ~= nil and tostring ~= "" then
   local data = {}
   -- Assumes temperature and humidity data device resources
   out = Timeseries.query({
@@ -46,7 +46,9 @@ if true then
 
   return 'Getting Last 20 Time Series Raw Data Points for: '..identifier..'\r\n'..to_json(out)
 else
-  http_error(403, response)
+  response.message = "Conflict - Identifier Incorrect"
+  response.code = 404
+  return
 end
 
 
@@ -65,5 +67,7 @@ if true then
   data['timeseries'] = out
   return data
 else
-  http_error(403, response)
+  response.message = "Conflict - Identifier Incorrect"
+  response.code = 404
+  return
 end
