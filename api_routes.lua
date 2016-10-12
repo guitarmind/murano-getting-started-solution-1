@@ -37,12 +37,20 @@ end
 local identifier = tostring(request.parameters.identifier)
 
 if tostring ~= nil and tostring ~= "" then
-  local data = {}
   -- Assumes temperature and humidity data device resources
-  out = Timeseries.query({
-    epoch='ms',
-    q = "SELECT value FROM temperature,humidity WHERE identifier = '" ..identifier.."' LIMIT 20"})
-  data['timeseries'] = out
+  local metrics = {
+    "temperature",
+    "humidity"
+  }
+  local tags = {
+    identifier = identifier
+  }
+  local out = Tsdb.query({
+    metrics = metrics,
+    tags = tags,
+    epoch= "ms",
+    limit = 20
+  })
 
   return 'Getting Last 20 Time Series Raw Data Points for: '..identifier..'\r\n'..to_json(out)
 else
@@ -50,7 +58,6 @@ else
   response.code = 404
   return
 end
-
 
 --#ENDPOINT GET /development/device/data
 -- Description: Get timeseries data for specific device
@@ -61,9 +68,20 @@ if true then
   local data = {}
   if window == nil then window = '30' end
   -- Assumes temperature and humidity data device resources
-  out = Timeseries.query({
-    epoch='ms',
-    q = "SELECT value FROM temperature,humidity WHERE identifier = '" ..identifier.."' AND time > now() - "..window.."m LIMIT 5000"})
+  local metrics = {
+    "temperature",
+    "humidity"
+  }
+  local tags = {
+    identifier = identifier
+  }
+  local out = Tsdb.query({
+    metrics = metrics,
+    tags = tags,
+    relative_start = "-" .. window .. "m",
+    epoch= "ms",
+    limit = 1000
+  })
   data['timeseries'] = out
   return data
 else

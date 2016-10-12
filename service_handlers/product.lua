@@ -5,8 +5,16 @@
 -- PUT DATA INTO TIME SERIES DATABASE STORAGE:
 -- ============================
 -- Write All Device Resource Data to timeseries database
-Timeseries.write({
-  query = data.alias .. ",identifier=" .. data.device_sn .. " value=" .. data.value[2]
+local metric = data.alias
+local metrics = {
+  [metric] = tonumber(data.value[2])
+}
+local tags = {
+  identifier = data.device_sn
+}
+Tsdb.write({
+  metrics = metrics,
+  tags = tags
 })
 
 -- PUT DATA INTO KEY VALUE STORE:
@@ -28,6 +36,6 @@ end
 -- Add in other available data about this device / incoming data
 value[data.alias] = data.value[2]
 value["timestamp"] = data.timestamp/1000 -- add server's timestamp
-value["pid"] = data.vendor or data.pid
+value["pid"] = data.pid
 -- Write data into key/value data store
 Keystore.set({key = "identifier_" .. data.device_sn, value = to_json(value)})
