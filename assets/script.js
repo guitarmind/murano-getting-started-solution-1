@@ -68,17 +68,37 @@ $(function() {
           {
             console.log('valid data return for: '+myDevice);
             // console.log(newdata.timeseries)
+            series = [];
             for (j = 0; j < newdata.timeseries.metrics.length; j++)
             {
-              var data = newdata.timeseries.values;
+              values = [];
+              var metric = newdata.timeseries.metrics[j];
+              for (k = 0; k < newdata.timeseries.values.length; k++)
+              {
+                cell = newdata.timeseries.values[k];
+                if (metric == "temperature")
+                {
+                  if (cell[2] !== null && cell[2] !== undefined)
+                  {
+                    values.push([cell[0], cell[2]]);
+                  }
+                }
+                else if (metric == "humidity")
+                {
+                  if (cell[1] !== null)
+                  {
+                    values.push([cell[0], cell[1]]);
+                  }
+                }
+              }
+              series.push(values);
+            }
+            for (j = 0; j < series.length; j++)
+            {
               var friendly = newdata.timeseries.metrics[j];
               var units = "";
-              var latest_cell = data[0]
-              // Workaround for the bug of to_json() in lua when the last element of an array is nil
-              if ((latest_cell.length - 1) < newdata.timeseries.metrics.length) {
-                latest_cell.push(null);
-              }
-              var last_val = latest_cell[j + 1];
+              var data = series[j];
+              var last_val = series[j][0][1];
               if (friendly == "temperature")
               {
                 units = "F";
