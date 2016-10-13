@@ -48,7 +48,8 @@ if tostring ~= nil and tostring ~= "" then
   local out = Tsdb.query({
     metrics = metrics,
     tags = tags,
-    epoch= "ms",
+    epoch = "ms",
+    mode = "split",
     limit = 20
   })
 
@@ -79,7 +80,8 @@ if true then
     metrics = metrics,
     tags = tags,
     relative_start = "-" .. window .. "m",
-    epoch= "ms",
+    epoch = "ms",
+    mode = "split",
     limit = 1000
   })
   data['timeseries'] = out

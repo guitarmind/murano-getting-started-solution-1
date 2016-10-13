@@ -68,49 +68,24 @@ $(function() {
           {
             console.log('valid data return for: '+myDevice);
             // console.log(newdata.timeseries)
-            series = [];
             for (j = 0; j < newdata.timeseries.metrics.length; j++)
             {
-              values = [];
               var metric = newdata.timeseries.metrics[j];
-              for (k = 0; k < newdata.timeseries.values.length; k++)
-              {
-                cell = newdata.timeseries.values[k];
-                if (metric == "temperature")
-                {
-                  if (cell[2] !== null && cell[2] !== undefined)
-                  {
-                    values.push([cell[0], cell[2]]);
-                  }
-                }
-                else if (metric == "humidity")
-                {
-                  if (cell[1] !== null)
-                  {
-                    values.push([cell[0], cell[1]]);
-                  }
-                }
-              }
-              series.push(values);
-            }
-            for (j = 0; j < series.length; j++)
-            {
-              var friendly = newdata.timeseries.metrics[j];
               var units = "";
-              var data = series[j];
-              var last_val = series[j][0][1];
-              if (friendly == "temperature")
+              var data = newdata.timeseries.values[metric];
+              var last_val = data[0][1];
+              if (metric == "temperature")
               {
                 units = "F";
-                friendly = "Temperature";
+                metric = "Temperature";
               }
-              else if (friendly == "humidity")
+              else if (metric == "humidity")
               {
                 units = "%";
-                friendly = "Humidity";
+                metric = "Humidity";
               }
               data_to_plot.push({
-                label: friendly + ' - '+ last_val + ' ' + units,
+                label: metric + ' - '+ last_val + ' ' + units,
                 data: data,
                 units: "F"
               });
